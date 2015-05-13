@@ -1,0 +1,221 @@
+Introduction to SQL
+
+    What makes SQL a nonprocedural language?
+
+	Commands given are at a high level - the database handles the details of how they are actually executed.		
+
+    How can you tell whether a database is truly relational?
+	
+	Data is split into tables which link together by keys.  	
+
+    What can you do with SQL?
+
+	Create data, Read data, Update data, Destroy data
+	
+    Name the process that separates data into distinct, unique sets.
+
+	normalization
+	
+    Do the following statements return the same or different output:
+
+    SELECT * FROM ARRESTS; select * from arrests;
+
+	SQL is generally not case-sensitive. Table names may be case sensitive in specific implementations.
+
+    None of the following queries work. Why not?
+
+	select *;
+		doesn't indicate from which table
+
+	Select * from checks 
+		missing semicolon at end
+
+	Select amount name payee FROM checks;
+		column names need to be separated by commas
+	
+    Which of the following SQL statements will work?
+
+    	select * 
+	from checks; <- this will work
+	select * from checks; <- this will work
+	select * from checks / <- this will work
+
+Given the following table description for the arrests table:
+nysid 	officerId 	topCharge
+
+Do the following:
+
+    Write a query to return just the officerId and the topCharge.
+
+	SELECT officerId, topCharge FROM arrests;
+
+    Rewrite the query from exercise 1 so that the topCharge will appear as the first column in your query results.
+
+	SELECT topCharge, officerId FROM arrests;
+
+    Using the arrests table, write a query to return all the unique topCharges.
+
+	SELECT DISTINCT topCharge FROM arrests;
+
+
+Use the doubleAgents table to answer the following questions.
+LASTNAME 	FIRSTNAME 	AREACODE 	PHONE 	ST 	ZIP
+BUNDY 	AL 	100 	555-1111 	IL 	22333
+MEZA 	AL 	200 	555-2222 	UK 	 
+MERRICK 	BUD 	300 	555-6666 	CO 	80212
+MAST 	JD 	381 	555-6767 	LA 	23456
+BULHER 	FERRIS 	345 	555-3223 	IL 	23332
+PERKINS 	ALTON 	911 	555-3116 	CA 	95633
+BOSS 	SIR 	204 	555-2345 	CT 	95633
+
+    Write a query that returns everyone in the database whose last name begins with M.
+
+	SELECT * FROM doubleAgents
+		WHERE LASTNAME LIKE 'M%';
+
+    Write a query that returns everyone who lives in Illinois with a first name of AL.
+
+	SELECT * FROM doubleAgents
+		WHERE ST = 'IL'
+		AND FIRSTNAME = 'AL';
+
+    What shorthand could you use instead of WHERE a >= 10 AND a <=30?
+
+	WHERE a BETWEEN 10 AND 30;
+
+    What will this query return?
+
+    SELECT FIRSTNAME FROM DOUBLE_AGENTS WHERE FIRSTNAME = 'AL' AND LASTNAME = 'BULHER';
+	
+	empty set - no such record exists in the table
+
+
+    Using the DOUBLEAGENTS table, write a query that returns the following:
+
+NAME 	ST
+AL FROM 	IL
+
+	SELECT FIRSTNAME+ 'FROM' AS NAME, ST FROM doubleAgents
+		WHERE FIRSTNAME = 'AL'
+		AND ST = 'IL';
+
+    Using the DOUBLEAGENTS table, write a query that returns the following:
+
+NAME 	PHONE
+MERRICK, BUD 	300-555-6666
+MAST, JD 	381-555-6767
+BULHER, FERRIS 	345-555-3223
+
+	SELECT LASTNAME+ ', '+FIRSTNAME AS NAME, AREACODE+ '-'+ PHONE AS PHONE FROM doubleAgents
+		WHERE AREACODE LIKE '3%'; 	
+
+    Which function capitalizes the first letter of a character string and makes the rest lowercase?
+
+	INITCAP
+
+    Which functions are also known by the same name?
+
+	? Not sure what this is asking.
+
+    Will this query work?
+
+    SELECT COUNT(LASTNAME) FROM CHARACTERS;
+
+	Yes, assuming a column LASTNAME exists in CHARACTERS table, this will return the number of distinct values in the LASTNAME column.
+
+    How about this one?
+
+    SELECT SUM(LASTNAME) FROM CHARACTERS
+
+	No, SUM() returns the total of all values in a numeric column. A last name would not be numeric.
+
+    Assuming that they are separate columns, which function(s) would splice together FIRSTNAME and LASTNAME?
+
+	CONCAT(FIRSTNAME,LASTNAME) AS NAME;
+
+    What does the answer 37 mean from the following SELECT?
+
+    SELECT COUNT(*) FROM drone_strikes;
+
+	There are 37 records in the drone_strikes table.
+
+    Will the following statement work? (Hint: look up substr)
+
+    SELECT SUBSTR LASTNAME,1,5 FROM NAME_TBL;
+
+	No, SUBSTR is a function that requires parentheses around the parameters SUBSTR(LASTNAME,1,5)
+
+Marksmanship table: (SHOOTSTATS?)
+officerId 	FirstName 	LastName 	hits 	shotsTaken
+
+    Using a table called SHOOTSTATS table, write a query to determine who is on target less than .25.
+
+	SELECT officerId, FirstName, LastName FROM SHOOTSTATS
+		WHERE hits/shotsTaken < .25;
+
+    Using today's OFFICERS table, write a query that will return the following:
+
+officers table
+First 	Middle 	Last 	BadgeID
+Kevin 	Anthony 	Petrone 	32
+
+OUTPUT:
+INITIALS 	CODE
+K.A.P. 	32
+
+	SELECT SUBSTR(First,1,1)+"."+SUBSTR(Middle,1,1)+"."+SUBSTR(Last,1,1)+"." AS INITIALS, BadgeID AS CODE FROM OFFICERS;
+
+    Which clause works just like LIKE(%)? (HINT: Look it up on google.)
+
+	STARTING WITH
+
+    What is the function of the GROUP BY clause, and what other clause does it act like?
+
+	GROUP BY groups the results by one or more columns. Similar to ORDER BY.
+
+    Will this SELECT work?
+
+    NAME, AVG(SALARY), DEPARTMENT FROM PAY_TBL WHERE DEPARTMENT = 'SWAT' ORDER BY NAME GROUP BY DEPARTMENT, SALARY;
+
+	NO, GROUP BY should come before ORDER BY. 
+
+    When using the HAVING clause, do you always have to use a GROUP BY also?
+
+	YES
+
+    Can you use ORDER BY on a column that is not one of the columns in the SELECT statement?
+
+	YES	
+
+    Using the ORGCHART table from the following examples, find out how many people on each team have 30 or more days of sick leave.
+
+Here is your baseline that shows how many folks are on each team.
+empId 	First 	Last 	Team 	Sickleave
+1 	Alan 	Turing 	Algebra 	31
+2 	John 	Von Neuman 	PDE 	32
+3 	Robert 	Oppenhiemer 	Physics 	27
+4 	Enrico 	Fermi 	Physics 	24
+5 	Leo 	Szilard 	Physics 	37
+6 	George 	Danzig 	Operations 	22
+7 	Eric 	Djkstra 	CS 	21
+8 	Linus 	Torvals 	CS 	36
+9 	Richard 	Stallman 	CS 	40
+
+
+	1 	Alan 	Turing 	Algebra 	31
+	2 	John 	Von Neuman 	PDE 	32
+	5 	Leo 	Szilard 	Physics 	37
+	8 	Linus 	Torvals 	CS 	36
+	9 	Richard 	Stallman 	CS 	40
+
+	Algebra 1
+	PDE 1
+	Physics 1
+	CS 2
+
+Compare it to the query that solves the question: INPUT:
+
+SELECT TEAM, COUNT(TEAM)
+FROM ORGCHART
+WHERE SICKLEAVE >=30
+GROUP BY TEAM;
